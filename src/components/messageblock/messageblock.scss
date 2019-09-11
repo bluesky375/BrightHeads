@@ -1,0 +1,110 @@
+messageblock{
+	
+	.chat_message,.chat_message_reverse{
+	    display: grid;
+	    grid-template-columns: 36px 1fr;
+	    align-items: center;
+	    grid-gap: 15px;
+	    position:relative;
+	    p {
+		    padding: 0;
+		    margin: 0;
+		    text-align: start;
+	        word-break: break-all;
+		}
+		.attachment_url{
+			padding: 0;
+		    margin: 0;
+		    text-align: start;
+		    word-break: break-all;
+		    font-size: 4rem;
+		}
+	    .chat_message_header{
+		    display: grid;
+		    opacity: 0.6;
+		    align-items: center;font-size:1rem;
+	        grid-template-columns: repeat(auto-fit,minmax(30px,1fr));
+			font-size: 80%;
+			p{
+				padding:0;text-align:start;font-size:1rem;
+
+			}
+	    }
+	    img{
+	    	border-radius:50%;
+	    	align-self:flex-end;
+	    }
+	    img.attachment_image{
+		border-radius:0px;
+		}	
+	    & > div{
+	        background: #fff;
+		    padding: 5px 10px;
+		    border-radius: 10px;
+	    }
+	    & > div:after {
+		    content: '';
+		    border: 10px solid;
+		    position: absolute;
+		    border-color: transparent #fff #fff transparent;
+		    bottom: 10px;
+		    left: 40px;
+		    z-index: -1;
+		}
+
+		& > div.mymessage {
+		    background: #dcf3fb;
+		    &:after {
+		    	 border-color: transparent #dcf3fb #dcf3fb transparent;
+		    }
+		}
+	}
+	
+	.chat_message_reverse{
+		grid-template-columns: 1fr 36px;
+		& > div:after{
+			left: auto;
+    			right: 40px;
+			border-color: transparent transparent #fff #fff;
+		}
+		& > div.mymessage{
+			&:after {
+				
+		    	 border-color: transparent transparent #dcf3fb #dcf3fb;
+		    }
+		}
+	}
+
+	div#all_chat_messages_wrapper {
+	}
+
+	.chat_message_wrapper {
+	  -webkit-animation: chatmessagepopup 0.5s ease-in; /* Safari 4+ */
+	  -moz-animation:     chatmessagepopup 0.5s ease-in; /* Fx 5+ */
+	  -o-animation:       chatmessagepopup 0.5s ease-in; /* Opera 12+ */
+	  animation:          chatmessagepopup 0.5s ease-in;
+	  }
+
+	@-webkit-keyframes chatmessagepopup {
+	  0%   { opacity: 0;transform:scale(0%); }
+	  100% { opacity: 1;transform:scale(100%); }
+	}
+	@-moz-keyframes chatmessagepopup {
+	0%   { opacity: 0;transform:scale(0%); }
+	  100% { opacity: 1;transform:scale(100%); }
+	}
+	@-o-keyframes chatmessagepopup {
+	0%   { opacity: 0;transform:scale(0%); }
+	  100% { opacity: 1;transform:scale(100%); }
+	}
+	@keyframes chatmessagepopup {
+	0%   { opacity: 0;transform:scale(0%); }
+	  100% { opacity: 1;transform:scale(100%); }
+	}
+	ion-slides { height: initial; }
+
+	.chat_message_wrapper+.chat_message_wrapper{
+		margin-top:10px;
+	}
+	
+}	

@@ -1,0 +1,187 @@
+<ion-header>
+    <ion-navbar  *ngIf="config.isLoggedIn">
+      <ion-slides dir="{{config.settings.rtl ? 'rtl' : undefined }}" #ChatTabs id="chattabs" spaceBetween="0" slidesPerView="2" (ionSlideDidChange)="onTabChanged()" *ngIf="config.isLoggedIn">
+            <ion-slide *ngFor="let tab of chatTabslist; let i=index;" (click)="selectedTab(i)">
+                <div class="chat_tab">
+                    <ion-icon [name]=tab.icon></ion-icon>
+                    <span>{{tab.label}}</span>
+                </div>
+            </ion-slide>
+        </ion-slides>
+    </ion-navbar>
+</ion-header>
+     
+<ion-content padding>  
+     <div *ngIf="config.isLoggedIn">
+     
+         <ion-slides dir="{{config.settings.rtl ? 'rtl' : undefined }}" id="chatslides" #ChatSlides (ionSlideDidChange)="onSlideChanged()">
+             <ion-slide *ngFor="let tab of chatTabslist; let i=index;">
+                    
+                    <div *ngIf="tab.key == 'mychats' ">
+                              <ion-refresher (ionRefresh)="doRefresh($event)">
+            						        <ion-refresher-content pullingText="{{config.get_translation('pull_to_refresh')}}"
+            						      pullingIcon="arrow-dropdown"
+            						      refreshingSpinner="circles"
+            						      refreshingText="{{config.get_translation('refreshing')}}"></ion-refresher-content>
+            					</ion-refresher>
+                              
+                        	<ion-buttons *ngIf="tab.key == 'mychats' ">
+    			                <button ion-button (click)="start_new_chat()" class="start_chat">{{config.get_translation('start_new_chat')}}</button>
+    			            </ion-buttons>
+                             <div *ngIf="chatService.myChats.length">
+                                   <div *ngFor="let chat of chatService.myChats" >
+                                     <ChatBlock [chat]="chat"></ChatBlock>
+                                   </div>
+                          </div>
+                 
+                    </div>
+
+                    
+
+                    <div padding *ngIf="tab.key == 'members' ">
+                      <ion-refresher (ionRefresh)="doRefresh_members($event)">
+                          <ion-refresher-content pullingText="{{config.get_translation('pull_to_refresh')}}"
+                        pullingIcon="arrow-dropdown"
+                        refreshingSpinner="circles"
+                        refreshingText="{{config.get_translation('refreshing')}}"></ion-refresher-content>
+                      </ion-refresher>
+                        <ion-item>
+                            <ion-input type="text" name="search_user" [(ngModel)]="to_search_user" [placeholder]="config.get_translation('type_here')" (keyup)="user_search()"
+                               ></ion-input>
+                        </ion-item>
+                        <div *ngIf="from_firebase">
+                        	<p  class="user_chat_message" [innerHtml]="config.get_translation('online_user_to_initiate_new_chat')"></p>
+	                        <div  *ngIf="backup_all_searched_users && backup_all_searched_users.length">
+	                            <div *ngFor="let user of backup_all_searched_users">
+
+                      <div (click)="start_new_chat_with_members(user)">
+								       <div class="user_online">
+								           <img [src]="user.image" />    
+								            <div>
+								              <div class="user_online_content">
+								              	<p [innerHtml]="user.name"></p>
+								              </div>
+								            </div>
+								       </div>
+								     </div> 
+	                            </div>
+	                        </div>
+	                    </div>
+
+                        <div *ngIf="!from_firebase">
+                        	<p class="user_chat_message" [innerHtml]="config.get_translation('user_from_site_you_can_not_chat')"></p>
+	                        <div  *ngIf="backup_all_searched_users && backup_all_searched_users.length">
+		                            <div *ngFor="let user of backup_all_searched_users">
+
+	                      <div>
+    									       <div class="user_online">
+    									           <img [src]="user.image" />    
+    									            <div>
+    									              <div class="user_online_content">
+    									              	<p [innerHtml]="user.name"></p>
+    									              </div>
+    									            </div>
+    									       </div>
+									     </div> 
+		                            </div>
+		                        </div>
+	                        </div>
+                        <ion-buttons >
+                          <button ion-button class="start_chat" (click)="search_user_from_directory()">{{config.get_translation('search_user_from_website')}}</button>
+                	   </ion-buttons>  
+                    </div>
+
+
+
+                    <div  padding *ngIf="tab.key == 'chat' ">
+                         <ion-card  >
+                              <ion-card-content>
+                                 Current Chat
+                              </ion-card-content>
+                         </ion-card>   
+                    </div>
+
+
+
+                    <div  padding *ngIf="tab.key == 'notification' ">
+                         <ion-card>
+                              <ion-card-content>
+                                 notification
+                              </ion-card-content>
+                         </ion-card>   
+                    </div>
+
+
+             </ion-slide>
+                 <ion-infinite-scroll (ionInfinite)="loadMoreChats($event)" position="bottom" *ngIf="removeLoadMore==1">
+                           <ion-infinite-scroll-content></ion-infinite-scroll-content>
+                </ion-infinite-scroll>
+         </ion-slides>
+
+     </div>
+     
+     <div *ngIf="!config.isLoggedIn">
+
+          <div *ngIf="non_logged_in_exist==0">
+         
+              <div [innerHtml]="config.chat.welcome_text"></div>
+              <div class="chat_messageform">
+                      <form [formGroup]="contact" (ngSubmit)="logForm()">
+                        <ion-item>
+                            <ion-label floating>{{config.get_translation('chat_name')}}</ion-label>
+                            <ion-input type="text" formControlName="chat_name"></ion-input>
+                        </ion-item>
+                        <ion-item>
+                            <ion-label floating>{{config.get_translation('chat_email')}}</ion-label>
+                            <ion-input type="text" formControlName="chat_email"></ion-input>
+                        </ion-item>
+                        <ion-item>
+                            <ion-label floating>{{config.get_translation('chat_message')}}</ion-label>
+                            <ion-textarea formControlName="chat_message"></ion-textarea>
+                        </ion-item>
+                        <ion-item>
+                            <button ion-button type="submit" block [disabled]="!contact.valid">{{config.get_translation('start_chat')}}</button>
+                        </ion-item>
+                    </form>  
+              </div>
+          </div>
+
+         <div *ngIf="non_logged_in_exist">
+            <ion-refresher (ionRefresh)="doRefresh_members($event)">
+                <ion-refresher-content pullingText="{{config.get_translation('pull_to_refresh')}}"
+                    pullingIcon="arrow-dropdown"
+                    refreshingSpinner="circles"
+                    refreshingText="{{config.get_translation('refreshing')}}"></ion-refresher-content>
+                  </ion-refresher>
+            <ion-buttons >
+                    <button ion-button (click)="start_new_chat()" class="start_chat">{{config.get_translation('start_new_chat')}}</button>
+            </ion-buttons>  
+            
+            <div *ngIf="chatService.myChats.length">
+                 <div *ngFor="let chat of chatService.myChats" >
+                    <ChatBlock [chat]="chat"></ChatBlock>
+                 </div>
+            </div>
+
+        </div>
+
+     </div>
+</ion-content>
+
+
+
+
+
+      <!--     <div (click)="goToNextPage(chat)">
+                     <div class="mychat" *ngIf="chat.allMessages[0] && chat.allMessages[0].user">
+                         <img [src]="chat.allMessages[0].user.image" />    
+                          <div>
+                            <div class="mychat_header"> 
+                               <friendlytime [time]="getChatLastTime(chat.allMessages[0].time)"></friendlytime>
+                              </div> 
+                            <div class="mychat_content">
+                              <p [innerHtml]="chat.allMessages[0].message"></p>
+                            </div>
+                          </div>
+                     </div>
+                   </div> -->

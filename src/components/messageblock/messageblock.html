@@ -1,0 +1,31 @@
+<div class="chat_message" *ngIf="chat && chat.user && config.user.id === chat.user.id">
+  <img *ngIf="chat.user.image" [src]="chat.user.image"  /> 
+  <div [ngClass]='{mymessage: config.user.id === chat.user.id}'>
+    <div class="chat_message_header">
+         <p [innerHtml]="getMessageLastTime(chat)"></p>
+    </div>
+    <p [innerHtml]="chat.message"></p>
+      <div class="attachment" *ngIf="chat.attachment && chat.attachment_type && mimeCheck(chat.attachment_type)">
+        <img  class="attachment_image" [src]="chat.attachment"/> 
+    </div>
+    <div class="attachment" *ngIf="chat.attachment && chat.attachment_type && !mimeCheck(chat.attachment_type)">
+        <a class="attachment_url" *ngIf="chat.attachment" [href]="chat.attachment"><ion-icon name="download"></ion-icon></a>
+    </div>   
+  </div>
+</div>
+<div class="chat_message_reverse" *ngIf="chat && chat.user && config.user.id !== chat.user.id">
+   <div [ngClass]='{mymessage: config.user.id === chat.user.id}'>
+        <div class="chat_message_header">
+            <p [innerHtml]="getMessageLastTime(chat)"></p>
+        </div>
+    <p [innerHtml]="chat.message"></p>
+    <div class="attachment" *ngIf="chat.attachment && chat.attachment_type && mimeCheck(chat.attachment_type)">
+        <img  class="attachment_image" [src]="chat.attachment"/> 
+    </div>
+    <div class="attachment" *ngIf="chat.attachment && chat.attachment_type && !mimeCheck(chat.attachment_type)">
+        <a class="attachment_url" *ngIf="chat.attachment" [href]="chat.attachment"><ion-icon name="download"></ion-icon></a>
+    </div>   
+  </div> 
+  
+  <img *ngIf="chat.user.image" [src]="chat.user.image"  /> 
+</div>

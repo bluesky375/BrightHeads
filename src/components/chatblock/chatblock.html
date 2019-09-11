@@ -1,0 +1,14 @@
+     <div (click)="goToNextPage(chat)">
+       <div class="mychat" *ngIf="chat.allMessages[0] && chat.allMessages[0].user">
+           <img [src]="chat.allMessages[0].user.image" />    
+            <div>
+              <div class="mychat_header"> 
+                <p [innerHtml]="getChatLastTime(chat.allMessages[0].time)"></p>
+              </div> 
+              <div class="mychat_content">
+                <p [innerHtml]="chat.allMessages[0].message"></p>
+                <p *ngIf="chat.unseen" [innerHtml]="chat.unseen"></p>
+              </div>
+            </div>
+       </div>
+     </div>

@@ -1,0 +1,80 @@
+<ion-header>
+	  <ion-navbar>
+	    <ion-title>{{assignment_data.title}}</ion-title>
+	  </ion-navbar>
+</ion-header>
+
+<ion-content padding> 
+
+		<ion-refresher (ionRefresh)="doRefresh($event)">
+		    <ion-refresher-content pullingText="{{config.get_translation('pull_to_refresh')}}"
+		      pullingIcon="arrow-dropdown"
+		      refreshingSpinner="circles"
+		      refreshingText="{{config.get_translation('refreshing')}}"></ion-refresher-content>
+	  	</ion-refresher>
+
+	 
+	
+
+		
+		<div  *ngIf=" loading == 1 ">
+			
+
+			
+				<h1 [innerHtml]="assignment_data.title"></h1>
+
+				<div class="assignment_header">
+					<span class="assignment_status">{{upload_assignment.assignment_res_data_service.message}}</span>
+					<span class="assignment_marks">
+						<span *ngIf="upload_assignment.assignment_res_data_service.flag == 2">{{upload_assignment.assignment_res_data_service.marks}}</span>
+						<span>{{upload_assignment.assignment_res_data_service.total_marks}}</span>
+					</span>
+				</div>
+				<div *ngIf="upload_assignment.assignment_res_data_service.flag == 1">
+					<div class="assignment_timer" *ngIf="timer_end == 0 && this.timerVal > 0" >
+						<span><strong>{{days}}</strong><span>{{config.get_translation('days')}}</span></span>
+						<span><strong>{{hours}}</strong><span>{{config.get_translation('hours')}}</span></span>
+						<span><strong>{{minutes}}</strong><span>{{config.get_translation('minutes')}}</span></span>
+						<span><strong>{{seconds}}</strong><span>{{config.get_translation('seconds')}}</span></span>
+					</div>
+				</div>
+				<div class="assignment_content" [innerHtml]="upload_assignment.assignment_res_data_service.content"></div>
+
+				<button ion-button ion-full  (click)="start_assignment()" *ngIf="upload_assignment.assignment_res_data_service.flag == 0 ">{{config.get_translation('start_assignment')}}</button>
+				
+				<div  *ngIf="upload_assignment.assignment_res_data_service.flag == 1">
+
+					<div class="uploaded_assignment" *ngIf="upload_assignment.assignment_res_data_service.attachment_url && upload_assignment.assignment_res_data_service.comment_content">
+						<h2>{{config.get_translation('your_attachment')}}:</h2>
+						<a [href]="upload_assignment.assignment_res_data_service.attachment_url"><ion-icon name="md-cloud-download"></ion-icon></a>
+						<h3>{{config.get_translation('your_attachment_comment')}}:</h3>
+						<p   [innerHtml]="upload_assignment.assignment_res_data_service.comment_content"></p>
+				    
+				    </div>			
+			    </div>
+
+			    <fieldset class="assignment_form"  *ngIf="upload_assignment.assignment_res_data_service.flag == 1 && timer_end == 0  && this.timerVal> 0" >
+				   
+				    <form [formGroup]="commentForm" (ngSubmit)="onSubmit(commentForm)"  >
+				    	
+				    	<ion-textarea formControlName="comment_content" placeholder="{{config.get_translation('Enter_your_comment')}}"></ion-textarea>
+				        <input type="file" formControlName="assignment" name="assignment" (change)="changeListener($event)"/>
+				       
+				        <h6>{{config.get_translation('Allowed_file_size')}}:</h6> 
+				        <span [innerHtml]="upload_assignment.assignment_res_data_service.permit_size"></span>kb
+				        <h6>{{config.get_translation('Allowed_extensions')}}:</h6> 
+				        <span *ngFor="let permit_extension of upload_assignment.assignment_res_data_service.permit_extension">
+				        	<span [innerHtml]="permit_extension"></span>,
+				        </span>
+
+						<button ion-button ion-full>{{config.get_translation('upload_assignment')}}</button>
+					</form>
+
+				</fieldset>
+
+		</div>
+
+  
+
+
+</ion-content>
